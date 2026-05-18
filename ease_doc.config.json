@@ -1,0 +1,55 @@
+{
+  "base_schema": "S3",
+  "scenario_id": "R90_W10",
+  "database": {
+    "name": "ecommerce",
+    "target": "MongoDB"
+  },
+  "volume": {
+    "profile": "default",
+    "collections": {
+      "customers": 1000,
+      "addresses": 1500,
+      "sellers": 200,
+      "products": 5000,
+      "categories": 100,
+      "carts": 1000,
+      "cart_items": 4000,
+      "orders": 10000,
+      "order_items": 30000,
+      "payments": 10000,
+      "shipments": 10000,
+      "reviews": 15000,
+      "coupons": 250,
+      "wishlists": 1000
+    }
+  },
+  "workload": {
+    "alpha_read": 0.90,
+    "read_mix": {
+      "q1": 0.12,
+      "q2": 0.11,
+      "q3": 0.08,
+      "q4": 0.05,
+      "q5": 0.10,
+      "q6": 0.05,
+      "q7": 0.07,
+      "q8": 0.05,
+      "q9": 0.05,
+      "q10": 0.05,
+      "q11": 0.06,
+      "q12": 0.07,
+      "q13": 0.08,
+      "q14": 0.06
+    },
+    "write_mix": {
+      "u1": 0.18,
+      "u2": 0.24,
+      "u3": 0.10,
+      "u4": 0.08,
+      "u5": 0.20,
+      "c1": 0.12,
+      "c2": 0.08
+    }
+  }
+}
