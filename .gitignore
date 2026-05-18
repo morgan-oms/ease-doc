@@ -1,3 +1,7 @@
+
+uschema-code-analysis/
+uschema/
+
 __pycache__/
 *.py[cod]
 *$py.class
