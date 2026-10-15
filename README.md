@@ -12,6 +12,21 @@ Em bancos NoSQL schemaless, o esquema lógico está implícito no código e nos 
 
 O EASE-Doc automatiza esse fluxo sobre a saída do pipeline [U-Schema Code Analysis](https://github.com/modelum/uschema-code-analysis), descrito em *Automated Extraction and Refactoring of NoSQL Schemas from Application Code* (Modelum / U-Schema).
 
+## Case study experimental
+
+O repositório [marketplace-easedoc](https://github.com/morgan-oms/marketplace-easedoc) é **essencial para compor e reproduzir os resultados experimentais** descritos em `ease_doc_article.pdf` (Seções 4–5).
+
+Ele concentra o código-fonte da aplicação Marketplace usada no artigo: 14 queries de leitura e 7 comandos de escrita sobre MongoDB (`marketplace`). Esse código é a entrada do U-Schema Code Analysis, que deriva o esquema base, os padrões de acesso e as 14 oportunidades de duplicação (\(2^{14} = 16\,384\) candidatos) exploradas pela busca Tabu. Sem esse repositório, não é possível regenerar os artefatos do Extrator nem amarrar o ranking de custo do EASE-Doc às medições de latência (YCSB) reportadas no experimento (RQ1–RQ3).
+
+Alinhamento com o pipeline local:
+
+| Artefato no marketplace-easedoc | Uso no EASE-Doc / artigo |
+| -------------------------------- | ------------------------ |
+| `src/queries/read/01`…`14` | Padrões `Q1`…`Q14` em `read_mix` |
+| `src/queries/write/01`…`07` | Padrões `U1`…`U5`, `C1`, `C2` em `write_mix` |
+| Database `marketplace` | `database.name` em `ease_doc.config.json` |
+| Volumetria do case study (89 050 docs) | `volume.collections` no config |
+
 ## Arquitetura
 
 
@@ -128,6 +143,7 @@ Para auditar a busca, abra o `easedoc_<base_schema>_path_R<α>_W<1−α>.csv` ge
 
 ## Referências
 
+- [marketplace-easedoc](https://github.com/morgan-oms/marketplace-easedoc) — código-fonte do case study Marketplace; base do experimento reportado no artigo EASE-Doc.
 - [uschema-code-analysis](https://github.com/modelum/uschema-code-analysis) — extração de esquemas NoSQL e planos de duplicação a partir de código.
 - [U-Schema](https://github.com/modelum/uschema) — metamodelo lógico utilizado pelo pipeline.
 
