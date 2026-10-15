@@ -85,14 +85,24 @@ def load_workload(path: Optional[Union[str, Path]] = None) -> Dict[str, Any]:
     if not isinstance(workload, dict):
         raise ValueError("Configuração inválida: chave 'workload' ausente ou não é um objeto.")
 
-    if "alpha_read" not in workload:
-        raise ValueError("Configuração inválida: 'workload.alpha_read' é obrigatório.")
+    # Artigo (Fig. 6) usa "alpha"; "alpha_read" permanece como alias legado.
+    if "alpha" in workload:
+        alpha_raw = workload["alpha"]
+        alpha_field = "workload.alpha"
+    elif "alpha_read" in workload:
+        alpha_raw = workload["alpha_read"]
+        alpha_field = "workload.alpha_read"
+    else:
+        raise ValueError(
+            "Configuração inválida: 'workload.alpha' é obrigatório "
+            "(ou o alias 'workload.alpha_read')."
+        )
     try:
-        alpha_read = float(workload["alpha_read"])
+        alpha_read = float(alpha_raw)
     except (TypeError, ValueError) as exc:
-        raise ValueError("Configuração inválida: 'workload.alpha_read' deve ser numérico.") from exc
+        raise ValueError(f"Configuração inválida: '{alpha_field}' deve ser numérico.") from exc
     if not 0.0 <= alpha_read <= 1.0:
-        raise ValueError("Configuração inválida: 'workload.alpha_read' deve estar em [0, 1].")
+        raise ValueError(f"Configuração inválida: '{alpha_field}' deve estar em [0, 1].")
 
     return {
         "alpha_read": alpha_read,

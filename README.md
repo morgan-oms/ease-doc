@@ -19,7 +19,7 @@ O EASE-Doc automatiza esse fluxo sobre a saída do pipeline [U-Schema Code Analy
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Extrator** (`extractor/`)  | Carrega artefatos do U-Schema: coleções, duplicações, padrões de leitura/escrita, tamanhos BSON, volumetria e workload (`ease_doc.config.json`).                                                                 |
 | **Avaliador** (`analyzer/`)  | Ajusta padrões e tamanhos de documento conforme duplicações ativas; interpreta referências no `dboSchemaModel.xmi`; estima o custo total de cada esquema candidato via `cost_evaluator` (Eqs. 1–8 do artigo).    |
-| **Seletor** (`selector/`)    | Representação de esquemas candidatos (flags), geração de vizinhanças e busca local *hill climbing best-improvement* sobre o espaço de duplicações.                                                               |
+| **Seletor** (`selector/`)    | Representação de esquemas candidatos (flags), geração de vizinhanças e busca Tabu sobre o espaço de duplicações.                                                                                                  |
 
 ## Pré-requisito obrigatório
 
@@ -53,7 +53,7 @@ Após esses passos, prossiga para a seção [Execução](#execução).
 
 ## Execução
 
-A execução padrão dispara o pipeline completo: extração via U-Schema → construção do avaliador → busca local (*hill climbing best-improvement*) → persistência dos resultados em CSV → relatório no terminal.
+A execução padrão dispara o pipeline completo: extração via U-Schema → construção do avaliador → busca Tabu → persistência dos resultados em CSV → relatório no terminal.
 
 ### Modo padrão (pipeline completo)
 
@@ -108,7 +108,7 @@ A saída lista, em ordem:
 1. **Duplicações extraídas** (`D1, D2, ...`) lidas do `possibles-duplication.js`.
 2. **Coleções base** identificadas no `noSQLSchemaModel.xmi`.
 3. **Volumetria** ativa (perfil + contagem de documentos por coleção).
-4. **Workload** ativo (`alpha_read`, `read_mix`, `write_mix`, `scenario_id`).
+4. **Workload** ativo (`alpha`, `read_mix`, `write_mix`, `scenario_id`).
 5. **Tamanho médio dos documentos** por coleção (em bytes, estimado via BSON).
 6. **Padrões de leitura** por consulta (`Q1, Q2, ...`).
 7. **Padrões de escrita** por operação (`U1, U2, ..., C1, C2, ...`), incluindo contagem de `reads`/`writes` por etapa.
@@ -119,7 +119,7 @@ A saída lista, em ordem:
 | -------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Nenhuma duplicação encontrada                      | Caminho do `possibles-duplication.js` e geração do launcher U-Schema.            |
 | `total_cost` desproporcionalmente alto             | Volumetria (`volume.collections`) e tamanho médio dos documentos.                |
-| Esquema final igual ao base (sem duplicações)      | `read_mix`/`write_mix` e `alpha_read` no `ease_doc.config.json`.                 |
+| Esquema final igual ao base (sem duplicações)      | `read_mix`/`write_mix` e `alpha` no `ease_doc.config.json`.                      |
 | Coleções faltando nos padrões                      | Conferir `noSQLSchemaModel.xmi` e `dboSchemaModel.xmi` na pasta `outputs/`.      |
 
 ### Inspecionando o trajeto da busca

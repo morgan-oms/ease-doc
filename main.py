@@ -35,7 +35,7 @@ from extractor import (
 )
 from extractor.config_loader import DEFAULT_CONFIG_PATH, load_config
 from extractor.dupes_loader import DEFAULT_POSSIBLES_DUPLICATION, load_dupe_ids
-from selector import flags_to_schema_name, greedy_hill_climb
+from selector import flags_to_schema_name, tabu_search
 
 
 @dataclass(frozen=True)
@@ -67,7 +67,7 @@ def extract_all(
     configuração, e devolve um snapshot imutável usado pelas camadas
     seguintes. Os modelos auxiliares (`query_structures`, `reference_graph`)
     são pré-carregados aqui para evitar parsing repetido do XMI dentro do
-    loop do hill climbing.
+    loop da busca Tabu.
     """
 
     cfg_path = config_path or DEFAULT_CONFIG_PATH
@@ -153,7 +153,7 @@ def run_pipeline(
     """Camada 4 — Seletor.
 
     Para cada perfil de volumetria, monta o avaliador correspondente e
-    executa o hill climbing best-improvement.
+    executa a busca Tabu.
     """
 
     path_rows_all: List[Dict[str, Any]] = []
@@ -161,7 +161,7 @@ def run_pipeline(
 
     for vol_label, doc_counts in artifacts.volumes.items():
         evaluator = make_evaluator(artifacts, doc_counts, cost_params=cost_params)
-        path_rows, final_row = greedy_hill_climb(
+        path_rows, final_row = tabu_search(
             evaluator,
             artifacts.dupe_ids,
             context={
@@ -182,7 +182,7 @@ def persist_results(
     artifacts: ExtractionArtifacts,
     output_dir: Path,
 ) -> Tuple[Path, Path]:
-    """Persiste o trajeto e a linha final do hill climbing em CSV."""
+    """Persiste o trajeto e a linha final da busca Tabu em CSV."""
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
